@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -56,8 +56,7 @@ public class PDS4Search {
 
   public static final String DOI_SERVER_URL = "https://pds.nasa.gov/api/doi/0.2/dois";
 
-  // Add a singleton Http2SolrClient
-  private static final AtomicReference<Http2SolrClient> solrClient = new AtomicReference<>();
+  private static final AtomicReference<HttpJdkSolrClient> solrClient = new AtomicReference<>();
 
   /**
    * Constructor.
@@ -67,25 +66,29 @@ public class PDS4Search {
     solrServerUrl = url;
   }
 
-  private Http2SolrClient getSolrClient() {
+  private HttpJdkSolrClient getSolrClient() {
     return solrClient.updateAndGet(client -> {
       if (client == null) {
-        return new Http2SolrClient.Builder(solrServerUrl).build();
+        return new HttpJdkSolrClient.Builder(solrServerUrl).build();
       }
       return client;
     });
   }
 
   public void cleanup() {
-    Http2SolrClient client = solrClient.getAndSet(null);
+    HttpJdkSolrClient client = solrClient.getAndSet(null);
     if (client != null) {
-      client.close();
+      try {
+        client.close();
+      } catch (IOException e) {
+        logger.warn("Error closing SolrClient: " + e.getMessage());
+      }
     }
   }
 
   public SolrDocumentList getCollections() throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
       ModifiableSolrParams params = new ModifiableSolrParams();
       params.add("q", "*");
       params.set("wt", "xml");
@@ -120,7 +123,7 @@ public class PDS4Search {
   }
 
   public SolrDocumentList getBundles() throws SolrServerException, IOException {
-    Http2SolrClient solr = getSolrClient();
+    HttpJdkSolrClient solr = getSolrClient();
 
     ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -149,7 +152,7 @@ public class PDS4Search {
   }
 
   public SolrDocumentList getObservationals(int start) throws SolrServerException, IOException {
-    Http2SolrClient solr = getSolrClient();
+    HttpJdkSolrClient solr = getSolrClient();
 
     ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -183,7 +186,7 @@ public class PDS4Search {
   }
 
   public SolrDocumentList getDocuments() throws SolrServerException, IOException {
-    Http2SolrClient solr = getSolrClient();
+    HttpJdkSolrClient solr = getSolrClient();
 
     ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -216,7 +219,7 @@ public class PDS4Search {
   }
 
   public SolrDocument getContext(String identifier) throws SolrServerException, IOException {
-    Http2SolrClient solr = getSolrClient();
+    HttpJdkSolrClient solr = getSolrClient();
 
     ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -275,7 +278,7 @@ public class PDS4Search {
 
   public Map<String, String> getResourceLinks(List<String> resourceRefList)
       throws SolrServerException, IOException {
-    Http2SolrClient solr = getSolrClient();
+    HttpJdkSolrClient solr = getSolrClient();
     ModifiableSolrParams params = null;
 
       Map<String, String> resourceMap = new LinkedHashMap<String, String>();

@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -61,28 +61,31 @@ public class PDS3Search {
     solrServerUrl = url;
   }
 
-  // Add a singleton Http2SolrClient
-  private static final AtomicReference<Http2SolrClient> solrClient = new AtomicReference<>();
+  private static final AtomicReference<HttpJdkSolrClient> solrClient = new AtomicReference<>();
 
-  private Http2SolrClient getSolrClient() {
+  private HttpJdkSolrClient getSolrClient() {
     return solrClient.updateAndGet(client -> {
       if (client == null) {
-        return new Http2SolrClient.Builder(solrServerUrl).build();
+        return new HttpJdkSolrClient.Builder(solrServerUrl).build();
       }
       return client;
     });
   }
 
   public void cleanup() {
-    Http2SolrClient client = solrClient.getAndSet(null);
+    HttpJdkSolrClient client = solrClient.getAndSet(null);
     if (client != null) {
-      client.close();
+      try {
+        client.close();
+      } catch (IOException e) {
+        logger.warn("Error closing SolrClient: " + e.getMessage());
+      }
     }
   }
 
   public SolrDocumentList getDataSetList() throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
       ModifiableSolrParams params = new ModifiableSolrParams();
 
       params.add("q", "pds_model_version:pds3");
@@ -119,7 +122,7 @@ public class PDS3Search {
 
   public SolrDocument getDataSet(String identifier) throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
       ModifiableSolrParams params = new ModifiableSolrParams();
 
       params.add("q", "pds_model_version:pds3 AND data_set_id:\"" + identifier + "\"");
@@ -170,7 +173,7 @@ public class PDS3Search {
 
   public SolrDocument getMission(String identifier) throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
       ModifiableSolrParams params = new ModifiableSolrParams();
 
       params.add("q", "pds_model_version:pds3 AND investigation_name:\"" + identifier + "\"");
@@ -208,7 +211,7 @@ public class PDS3Search {
 
   public SolrDocument getInstHost(String identifier) throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
       ModifiableSolrParams params = new ModifiableSolrParams();
 
       params.add("q", "pds_model_version:pds3 AND instrument_host_id:\"" + identifier + "\"");
@@ -246,7 +249,7 @@ public class PDS3Search {
 
   public List<SolrDocument> getInst(String identifier) throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
       ModifiableSolrParams params = new ModifiableSolrParams();
 
       params.add("q", "pds_model_version:pds3 AND instrument_id:\"" + identifier + "\"");
@@ -286,7 +289,7 @@ public class PDS3Search {
   public SolrDocument getInst(String instId, String instHostId)
       throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
 
       ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -325,7 +328,7 @@ public class PDS3Search {
 
   public SolrDocument getTarget(String identifier) throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
 
       ModifiableSolrParams params = new ModifiableSolrParams();
 
@@ -366,7 +369,7 @@ public class PDS3Search {
 
   public SolrDocument getResource(String identifier) throws SolrServerException, IOException {
     try {
-      Http2SolrClient solr = getSolrClient();
+      HttpJdkSolrClient solr = getSolrClient();
 
       ModifiableSolrParams params = new ModifiableSolrParams();
 
