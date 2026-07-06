@@ -81,7 +81,7 @@ public class PDS4Search {
       try {
         client.close();
       } catch (IOException e) {
-        logger.warn("Error closing SolrClient: " + e.getMessage());
+        logger.warn("Error closing SolrClient", e);
       }
     }
   }
