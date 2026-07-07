@@ -2,7 +2,7 @@ package gov.nasa.pds.dsview.registry;
 
 import static org.junit.Assert.*;
 
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -44,8 +44,8 @@ public class PDS4SearchTest {
 
     @Test
     public void testGetSolrClient_ReturnsSameInstance() throws Exception {
-        Http2SolrClient client1 = invokeGetSolrClient();
-        Http2SolrClient client2 = invokeGetSolrClient();
+        HttpJdkSolrClient client1 = invokeGetSolrClient();
+        HttpJdkSolrClient client2 = invokeGetSolrClient();
         assertSame("getSolrClient() must return the same instance on repeated calls", client1, client2);
     }
 
@@ -59,26 +59,26 @@ public class PDS4SearchTest {
 
     @Test
     public void testGetSolrClient_AfterCleanup_CreatesNewInstance() throws Exception {
-        Http2SolrClient first = invokeGetSolrClient();
+        HttpJdkSolrClient first = invokeGetSolrClient();
         pds4Search.cleanup();
-        Http2SolrClient second = invokeGetSolrClient();
+        HttpJdkSolrClient second = invokeGetSolrClient();
         assertNotNull(second);
         assertNotSame("After cleanup, getSolrClient() must return a new instance", first, second);
         // clean up the second client
         pds4Search.cleanup();
     }
 
-    private Http2SolrClient invokeGetSolrClient() throws Exception {
+    private HttpJdkSolrClient invokeGetSolrClient() throws Exception {
         Method method = PDS4Search.class.getDeclaredMethod("getSolrClient");
         method.setAccessible(true);
-        return (Http2SolrClient) method.invoke(pds4Search);
+        return (HttpJdkSolrClient) method.invoke(pds4Search);
     }
 
     @SuppressWarnings("unchecked")
-    private AtomicReference<Http2SolrClient> getSolrClientField() throws Exception {
+    private AtomicReference<HttpJdkSolrClient> getSolrClientField() throws Exception {
         Field field = PDS4Search.class.getDeclaredField("solrClient");
         field.setAccessible(true);
-        return (AtomicReference<Http2SolrClient>) field.get(null);
+        return (AtomicReference<HttpJdkSolrClient>) field.get(null);
     }
 
     @Test
