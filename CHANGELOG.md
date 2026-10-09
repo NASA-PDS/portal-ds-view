@@ -1,16 +1,13 @@
 # Changelog
 
-## [2.26.0](https://github.com/NASA-PDS/portal-ds-view/tree/2.26.0) (2026-07-07)
+## [«unknown»](https://github.com/NASA-PDS/portal-ds-view/tree/«unknown») (2026-10-09)
 
-[Full Changelog](https://github.com/NASA-PDS/portal-ds-view/compare/release/2.26.0...2.26.0)
+[Full Changelog](https://github.com/NASA-PDS/portal-ds-view/compare/v2.25.3...«unknown»)
 
 **Defects:**
 
+- LID with new VID still attached to old DOI [\#68](https://github.com/NASA-PDS/portal-ds-view/issues/68) [[s.medium](https://github.com/NASA-PDS/portal-ds-view/labels/s.medium)]
 - Tomcat ThreadLocal memory leak on undeploy caused by Http2SolrClient Jetty byte buffer pools [\#65](https://github.com/NASA-PDS/portal-ds-view/issues/65) [[s.medium](https://github.com/NASA-PDS/portal-ds-view/labels/s.medium)]
-
-## [release/2.26.0](https://github.com/NASA-PDS/portal-ds-view/tree/release/2.26.0) (2026-07-07)
-
-[Full Changelog](https://github.com/NASA-PDS/portal-ds-view/compare/v2.25.3...release/2.26.0)
 
 ## [v2.25.3](https://github.com/NASA-PDS/portal-ds-view/tree/v2.25.3) (2026-04-01)
 
