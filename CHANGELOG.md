@@ -1,6 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/portal-ds-view/tree/«unknown») (2026-10-09)
+## [«unknown»](https://github.com/NASA-PDS/portal-ds-view/tree/«unknown») (2026-10-12)
 
 [Full Changelog](https://github.com/NASA-PDS/portal-ds-view/compare/v2.25.3...«unknown»)
 
